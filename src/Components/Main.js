@@ -4,7 +4,7 @@ import { useEffect } from "react/cjs/react.development";
 import Card from "./Card";
 let API_key="&api_key=db95773a7fb212ba790d71f6adac0e7e";
 let base_url="https://api.themoviedb.org/3";
-let url=base_url+"/discover/movie?sort_by=popularity.desc"+API_key;
+let url=base_url+"/discover/movie?primary_release_date.gte=2014-09-15&primary_release_date.lte=2014-10-22"+API_key;
 let arr=["Characters","Comics","Stories"];
 
 const Main=()=>{
