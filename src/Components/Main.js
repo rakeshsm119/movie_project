@@ -1,0 +1,82 @@
+import { getDefaultNormalizer } from "@testing-library/react";
+import react,{useState} from "react";
+import { useEffect } from "react/cjs/react.development";
+import Card from "./Card";
+let API_key="&api_key=db95773a7fb212ba790d71f6adac0e7e";
+let base_url="https://api.themoviedb.org/3";
+let url=base_url+"/discover/movie?sort_by=popularity.desc"+API_key;
+let arr=["Characters","Comics","Stories"];
+
+const Main=()=>{
+    const [movieData,setData]=useState([]);
+    const [url_set,setUrl]=useState(url);
+    const [search,setSearch]=useState();
+    useEffect(()=>{
+        fetch(url_set).then(res=>res.json()).then(data=>{
+            setData(data.results);
+        });
+    },[url_set])
+
+    const getData=(movieType)=>{
+        if(movieType=="Characters")
+        {
+            url=base_url+"/discover/movie?primary_release_date.gte=2014-09-15&primary_release_date.lte=2014-10-22"+API_key;
+        }
+        if(movieType=="Stories")
+        {
+            url=base_url+"/discover/movie?with_genres=18&primary_release_year=2014"+API_key;
+        }
+        if(movieType=="Comics")
+        {
+            url=base_url+"/discover/movie?with_genres=35&with_cast=23659&sort_by=revenue.desc"+API_key;
+        }
+        setUrl(url);
+
+    }
+    const searchMovie=(evt)=>{
+        if(evt.key=="Enter")
+        {
+            url=base_url+"/search/movie?api_key=db95773a7fb212ba790d71f6adac0e7e&query="+search;
+            setUrl(url);
+            setSearch(" ");
+        }
+    }
+    return(
+        <>
+            <div className="header">
+                <nav>
+                    <ul>
+                            <span class="icon--svg icon--svg mvl-animated-logo" aria-hidden="true"><svg width="130" height="52" xmlns="http://www.w3.org/2000/svg"><rect fill="#EC1D24" width="100%" height="100%"></rect><path fill="#FEFEFE" d="M126.222 40.059v7.906H111.58V4h7.885v36.059h6.757zm-62.564-14.5c-.61.294-1.248.44-1.87.442v-14.14h.04c.622-.005 5.264.184 5.264 6.993 0 3.559-1.58 5.804-3.434 6.705zM40.55 34.24l2.183-18.799 2.265 18.799H40.55zm69.655-22.215V4.007H87.879l-3.675 26.779-3.63-26.78h-8.052l.901 7.15c-.928-1.832-4.224-7.15-11.48-7.15-.047-.002-8.06 0-8.06 0l-.031 39.032-5.868-39.031-10.545-.005-6.072 40.44.002-40.435H21.278L17.64 26.724 14.096 4.006H4v43.966h7.95V26.78l3.618 21.192h4.226l3.565-21.192v21.192h15.327l.928-6.762h6.17l.927 6.762 15.047.008h.01v-.008h.02V33.702l1.845-.27 3.817 14.55h7.784l-.002-.01h.022l-5.011-17.048c2.538-1.88 5.406-6.644 4.643-11.203v-.002C74.894 19.777 79.615 48 79.615 48l9.256-.027 6.327-39.85v39.85h15.007v-7.908h-7.124v-10.08h7.124v-8.03h-7.124v-9.931h7.124z"></path><path fill="#EC1D24" d="M0 0h30v52H0z"></path><path fill="#FEFEFE" d="M31.5 48V4H21.291l-3.64 22.735L14.102 4H4v44h8V26.792L15.577 48h4.229l3.568-21.208V48z"></path></svg></span>  
+                        {
+                            arr.map((value,pos)=>{
+                                return(
+                                    <li><a href="#" key={pos} name={value} className="content" onClick={(e)=>{getData(e.target.name)}}>{value}</a></li>
+                                )
+                            })
+                        }
+                       
+                    </ul>
+                </nav>
+                <form>
+                    <div className="search-btn">
+                        <input type="text" placeholder="Enter Movie Name" 
+                        className="inputText" onChange={(e)=>{setSearch(e.target.value)}} 
+                        value={search} onKeyPress={searchMovie}>
+                        </input>
+                        <button><i className="fas fa-search"></i></button>
+                    </div>
+                </form>
+            </div>
+            <div className="container">
+                {
+                    (movieData.length==0)?<p className="notfound">Not Found</p>: movieData.map((res,pos)=>{
+                        return(
+                            <Card info={res} key={pos}/>
+                        )
+                    })
+                }
+            </div>
+        </>
+    )
+}
+export default Main;
